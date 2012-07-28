@@ -61,8 +61,6 @@ void NokiaLCD::setPixel(int x, int y, Color c) {
     
     unsigned char b1 = ((c.getR() & 0xF) << 4) + (c.getG() & 0xF);
     unsigned char b2 = c.getB() << 4;
-    Serial.println(c.getR());
-    Serial.println(b2);
     
     sendSPI(b1, _DATA);
     sendSPI(b2, _DATA);
