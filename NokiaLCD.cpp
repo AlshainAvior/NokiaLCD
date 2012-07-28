@@ -67,6 +67,50 @@ void NokiaLCD::setPixel(int x, int y, Color c) {
     sendSPI(NOP, _COMMAND);
 }
 
+void NokiaLCD::setRect(int x, int y, int w, int h, Color c) {
+    sendSPI(CASET, _COMMAND);
+    sendSPI(x, _DATA);
+    sendSPI(x+w, _DATA);
+    
+    sendSPI(PASET, _COMMAND);
+    sendSPI(y, _DATA);
+    sendSPI(y+h, _DATA);
+    
+    sendSPI(RAMWR, _COMMAND);
+    
+    unsigned char b1 = ((c.getR() & 0xF) << 4) + (c.getG() & 0xF);
+    unsigned char b2 = ((c.getB() & 0xF) << 4) + (c.getR() & 0xF);
+    unsigned char b3 = ((c.getG() & 0xF) << 4) + (c.getB() & 0xF);
+      
+    for (int i = 0; i < (w*(h/2))+h+1; i++) {
+        sendSPI(b1, _DATA);
+        sendSPI(b2, _DATA);
+        sendSPI(b3, _DATA);
+    }
+}
+
+void NokiaLCD::clearScreen(Color c) {
+    sendSPI(CASET, _COMMAND);
+    sendSPI(0, _DATA);
+    sendSPI(131, _DATA);
+    
+    sendSPI(PASET, _COMMAND);
+    sendSPI(0, _DATA);
+    sendSPI(131, _DATA);
+    
+    sendSPI(RAMWR, _COMMAND);
+    
+    unsigned char b1 = ((c.getR() & 0xF) << 4) + (c.getG() & 0xF);
+    unsigned char b2 = ((c.getB() & 0xF) << 4) + (c.getR() & 0xF);
+    unsigned char b3 = ((c.getG() & 0xF) << 4) + (c.getB() & 0xF);
+    
+    for (int i = 0; i < (132*(132/2))+133; i++) {
+        sendSPI(b1, _DATA);
+        sendSPI(b2, _DATA);
+        sendSPI(b3, _DATA);
+    }
+}
+
 void NokiaLCD::sendSPI(unsigned char b, boolean isCommand) {
     digitalWrite(_CS, LOW);
     
