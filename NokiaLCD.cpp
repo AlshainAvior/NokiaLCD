@@ -82,7 +82,81 @@ void NokiaLCD::setRect(int x, int y, int w, int h, Color c) {
     unsigned char b2 = ((c.getB() & 0xF) << 4) + (c.getR() & 0xF);
     unsigned char b3 = ((c.getG() & 0xF) << 4) + (c.getB() & 0xF);
       
-    for (int i = 0; i < (w*(h/2))+h+1; i++) {
+    for (int i = 0; i < (((w+1)*(h+1))/2)+1; i++) {
+        sendSPI(b1, _DATA);
+        sendSPI(b2, _DATA);
+        sendSPI(b3, _DATA);
+    }
+}
+
+void NokiaLCD::setRectOutline(int x, int y, int w, int h, int os, Color c) {
+    unsigned char b1 = ((c.getR() & 0xF) << 4) + (c.getG() & 0xF);
+    unsigned char b2 = ((c.getB() & 0xF) << 4) + (c.getR() & 0xF);
+    unsigned char b3 = ((c.getG() & 0xF) << 4) + (c.getB() & 0xF);
+
+    //Left side
+    sendSPI(CASET, _COMMAND);
+    sendSPI(x, _DATA);
+    sendSPI(x+os-1, _DATA);
+    
+    sendSPI(PASET, _COMMAND);
+    sendSPI(y, _DATA);
+    sendSPI(y+h, _DATA);
+
+    sendSPI(RAMWR, _COMMAND);
+
+    for (int i = 0; i < (((os+1)*(h+1))/2)+1; i++) {
+        sendSPI(b1, _DATA);
+        sendSPI(b2, _DATA);
+        sendSPI(b3, _DATA);
+    }
+
+    //Right side
+    sendSPI(CASET, _COMMAND);
+    sendSPI((x+w)-os+1, _DATA);
+    sendSPI(x+w, _DATA);
+
+    sendSPI(PASET, _COMMAND);
+    sendSPI(y, _DATA);
+    sendSPI(y+h, _DATA);
+
+    sendSPI(RAMWR, _COMMAND);
+    
+    for (int i = 0; i < (((os+1)*(h+1))/2)+1; i++) {
+        sendSPI(b1, _DATA);
+        sendSPI(b2, _DATA);
+        sendSPI(b3, _DATA);
+    }
+
+    //Top
+    sendSPI(CASET, _COMMAND);
+    sendSPI(x, _DATA);
+    sendSPI(x+w, _DATA);
+
+    sendSPI(PASET, _COMMAND);
+    sendSPI(y, _DATA);
+    sendSPI(y+os-1, _DATA);
+
+    sendSPI(RAMWR, _COMMAND);
+
+    for (int i = 0; i < (((os+1)*(h+1))/2)+1; i++) {
+        sendSPI(b1, _DATA);
+        sendSPI(b2, _DATA);
+        sendSPI(b3, _DATA);
+    }
+
+    //Bottom
+    sendSPI(CASET, _COMMAND);
+    sendSPI(x, _DATA);
+    sendSPI(x+w, _DATA);
+    
+    sendSPI(PASET, _COMMAND);
+    sendSPI((y+h)-os+1, _DATA);
+    sendSPI(y+h, _DATA);
+
+    sendSPI(RAMWR, _COMMAND);
+
+    for (int i = 0; i < (((os+1)*(h+1))/2)+1; i++) {
         sendSPI(b1, _DATA);
         sendSPI(b2, _DATA);
         sendSPI(b3, _DATA);
